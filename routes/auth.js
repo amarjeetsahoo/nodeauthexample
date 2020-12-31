@@ -3,6 +3,7 @@ const User = require('../model/User');
 const { registerValidation } = require('../validation');
 const { loginValidation } = require('../validation');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 router.post('/register', async (req, res) => {
@@ -31,14 +32,14 @@ router.post('/register', async (req, res) => {
     });
     try {
         const savedUser = await user.save();
-        res.send({user:user._id});
+        res.send({ user: user._id });
     } catch (err) {
         res.status(400).send(err);
     }
 });
 
 //login
-router.post('/login', async(req, res) => {
+router.post('/login', async (req, res) => {
     //LET'S VALIDATE THE DATA BEFORE WE SEND TO DB
     const { error } = loginValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -50,7 +51,11 @@ router.post('/login', async(req, res) => {
     const validPass = await bcrypt.compare(req.body.password, user.password);
     if (!validPass) return res.status(400).send("Invalid Password");
 
+    //create and assign a token
+    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+    res.header('auth-token', token);//.send(token);
     res.send("Logged In");
+
 });
 
 module.exports = router;

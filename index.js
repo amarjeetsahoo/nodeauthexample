@@ -20,9 +20,11 @@ app.use(express.json());
 
 //import routes
 const authRoute = require('./routes/auth');
+const posts = require('./routes/posts');
 
 //route middlewares
 app.use('/api/user', authRoute);
+app.use('/api/posts', posts);
 
 app.listen(3000, () => {
     console.log("Server is Running");
