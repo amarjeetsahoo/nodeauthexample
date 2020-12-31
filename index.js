@@ -15,6 +15,9 @@ mongoose.connect(process.env.DB_CONNECT,
         console.log('connected to db!');
     })
 
+//middlewares
+app.use(express.json());
+
 //import routes
 const authRoute = require('./routes/auth');
 
